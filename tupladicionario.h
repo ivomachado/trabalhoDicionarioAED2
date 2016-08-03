@@ -3,5 +3,8 @@
 typedef struct {
     void * chave;
     TCompara compara;
-    TElemento *valor;
+    void * valor;
 }TTuplaDicionario;
+
+
+typedef int (*THashing)(void*, int M);
