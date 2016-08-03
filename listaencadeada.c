@@ -30,8 +30,8 @@ static short Vazia(TLista *l){
     return 0;
 }
 
-//Faz  a inserção no fim da lista
-static void Inserir (TLista *l, void *elem){
+//Faz  a inserï¿½ï¿½o no fim da lista
+static void inserir Inserir (TLista *l, void *elem){
     TDadoLista *d = l->dado;
     TNo *novoNo = CriarNo(elem);
 
@@ -47,7 +47,7 @@ static void Inserir (TLista *l, void *elem){
 
 
 //Remove do inicio da lista
-static void Remover(TLista *l){
+static void RemoverInicio(TLista *l){
     TDadoLista *d = l->dado;
     TNo *no;
 
@@ -60,8 +60,36 @@ static void Remover(TLista *l){
 }
 
 
-//Diz se um elemento está ou não na lista
-static short Buscar(TLista *l, void *elem){
+static void Remover(TLista *l, void * elem){
+    TDadoLista *d = l->dado;
+    TNo *no, *aux;
+    TComparavel comp = (TComparavel*)elem;
+
+    if(!Vazia(l)){
+        aux = NULL;
+        no = d->inicio;
+        while(no != NULL) {
+            if(comp->compara(elem, no->elemento)) {
+                if(d->inicio == no) {
+                    d->inicio = d->inicio->proximo;
+                } else {
+                    aux->proximo = no->proximo;
+                }
+                if(d->fim == no) {
+                    d->fim = aux;
+                }
+                no->proximo = NULL;
+            }
+            aux = no;
+            no = no->proximo;
+        }
+        free(no);
+    }
+}
+
+
+//Diz se um elemento estï¿½ ou nï¿½o na lista
+static int Buscar(TLista *l, void *elem){
     TDadoLista *d = l->dado;
     TNo *aux;
     TComparavel *c1;
@@ -77,6 +105,24 @@ static short Buscar(TLista *l, void *elem){
     }
 
     return 0;
+}
+
+static void * BuscaRetorno(TLista *l, void *elem) {
+    TDadoLista *d = l->dado;
+    TNo *aux;
+    TComparavel *c1;
+
+
+    if(Vazia(l)) return 0;
+
+    aux = d->inicio;
+    c1 = (TComparavel*)aux->elemento;
+    while(aux != NULL){
+        if(c1->compara(aux->elemento, elem) == 0) return aux->elem;
+        aux = aux->proximo;
+    }
+
+    return NULL;
 }
 
 static void Imprimir(TLista *l){
@@ -110,9 +156,11 @@ TLista* CriarLista(){
     l->dado = CriarDado();
     l->inserir = Inserir;
     l->remover = Remover;
+    l->removerInicio = RemoverInicio;
     l->vazia = Vazia;
     l->buscar = Buscar;
     l->imprimir = Imprimir;
+    l->buscarComRetorno = BuscaRetorno;
 
     return l;
 }
