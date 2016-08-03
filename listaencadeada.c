@@ -12,6 +12,7 @@ struct No{
 typedef struct {
     TNo *inicio;
     TNo *fim;
+    int qtde;
 }TDadoLista;
 
 static void* CriarNo(void *elem){
@@ -30,8 +31,13 @@ static short Vazia(TLista *l){
     return 0;
 }
 
+static short tamanho(TLista *l) {
+    TDadoLista *d = l->dado;
+    return d->qtde;
+}
+
 //Faz  a inser��o no fim da lista
-static void inserir Inserir (TLista *l, void *elem){
+static void Inserir (TLista *l, void *elem){
     TDadoLista *d = l->dado;
     TNo *novoNo = CriarNo(elem);
 
@@ -42,7 +48,7 @@ static void inserir Inserir (TLista *l, void *elem){
         d->fim->proximo = novoNo;
         d->fim = novoNo;
     }
-
+    d->qtde++;
 }
 
 
@@ -56,6 +62,7 @@ static void RemoverInicio(TLista *l){
         d->inicio = d->inicio->proximo;
 
         free(no);
+        d->qtde--;
     }
 }
 
@@ -84,12 +91,13 @@ static void Remover(TLista *l, void * elem){
             no = no->proximo;
         }
         free(no);
+        d->qtde--;
     }
 }
 
 
 //Diz se um elemento est� ou n�o na lista
-static int Buscar(TLista *l, void *elem){
+static short Buscar(TLista *l, void *elem){
     TDadoLista *d = l->dado;
     TNo *aux;
     TComparavel *c1;
@@ -144,6 +152,7 @@ static TDadoLista* CriarDado(){
     TDadoLista *d = (TDadoLista*)malloc(sizeof(TDadoLista));
 
     d->inicio = d->fim = NULL;
+    d->qtde = 0;
 
     return d;
 
@@ -161,6 +170,7 @@ TLista* CriarLista(){
     l->buscar = Buscar;
     l->imprimir = Imprimir;
     l->buscarComRetorno = BuscaRetorno;
+    l->tamanho = tamanho;
 
     return l;
 }

@@ -7,6 +7,7 @@ typedef short (*TVaziaLista)(TLista*);
 typedef short (*TBuscarLista)(TLista*, void*);
 typedef void* (*TBuscarRetornoLista)(TLista*, void*);
 typedef void (*TImprimirLista)(TLista*);
+typedef int (*TTamanhoLista)(TLista*);
 
 TLista* CriarLista();
 
@@ -19,5 +20,6 @@ struct lista {
     TBuscarLista buscar;
     TBuscarRetornoLista buscarComRetorno;
     TImprimirLista imprimir;
+    TTamanhoLista tamanho;
 };
 
