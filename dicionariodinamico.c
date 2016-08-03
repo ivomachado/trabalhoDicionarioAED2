@@ -12,45 +12,28 @@ typedef struct dado {
     int ocupacao;
     int fatorCarga;
     int fatorAgrupamento;
+    TCompara comparaChave;
+    THashing hash;
     TArrayDinamico array;
 } TDadoDicionarioDinamico;
 
-TDadoDicionarioDinamico* criarDado(int tam, double fc)
+TDadoDicionarioDinamico* criarDado(int tam, double fc, THashing hash, TCompara comparaChave)
 {
     TDadoDicionarioDinamico* d = (TDadoDicionarioDinamico*)malloc(sizeof(TDadoDicionarioDinamico));
     d->tam = tam * (2.0 - fc);
     d->fatorCarga = fc;
     d->fatorAgrupamento = 0.0;
+    d->hash = hash;
+    d->comparaChave = comparaChave;
     d->array = criarArrayDinamico(d->tam);
     d->ocupacao = 0;
     return d;
 }
 
-static int hash(int k, int m)
-{
-    return (k % m);
-}
 
+//TODO: implementar Evaluation
 static short evaluation(TDicionario *d) {
     TDadoDicionarioDinamico *dd = d->dado;
-    int sumXi = 0;
-    int amostras = sqrt(dd->tam);
-    srand(time(NULL));
-    do {
-        int posi = rand() % dd->tam; // TODO: tem que resolver
-        int i = 0;
-        TComparavel *e;
-        do {
-            int posc = (posi + i)%dd->tam;
-            i++;
-            e = dd->dado[posc];
-        }while(e!=NULL);
-        int Xi = i - 1;
-        sumXi = sumXi + Xi*Xi;
-        amostras--;
-    }while(amostras); // TODO: tem qeu resolverx
-    double n = sqrt(dd->tam - 1);
-    dd->fatorAgrupamento = (double) (sumXi)/(n - 1) - dd->fatorCarga;
 }
 
 static void* buscar(TDicionario* d, int k)
@@ -93,10 +76,11 @@ static void *remover(TDicionario *d, int k) {
     }
 }
 
-TDicionario *criarDicionario(int tam, )
+TDicionario *criarDicionarioDinamico(int tam, THashing hash, TCompara comparaChave)
 {
-    TDadoDicionarioDinamico* d = criarDado(tam, 0.8);
+    TDadoDicionarioDinamico* d = criarDado(tam, 0.8, hash, comparaChave);
     TDicionario *dict = malloc(sizeof(TDicionario));
     dict->buscar = buscar;
     dict->inserir = inserir;
+    dict->remover = remover;
 }
