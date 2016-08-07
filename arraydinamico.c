@@ -9,7 +9,7 @@ typedef struct{
 
 static void** ajustar(void *_add, int novoTamanho){
 	TDado *d=_add;
-	void **novo = malloc(sizeof(void*)*novoTamanho);
+	void **novo = calloc(novoTamanho,sizeof(void*));
 	int i;
 	for (i=0;i< d->tamanho;i++)
         novo[i] = d->_dado[i];
@@ -38,7 +38,7 @@ static int tamanho(TArrayDinamico *ad){
 static void *criarDado(int tam){
 	TDado *d = malloc(sizeof(TDado));
 	d->tamanho=tam;
-	d->_dado = malloc(sizeof(void*)*d->tamanho);
+	d->_dado = calloc(d->tamanho, sizeof(void*));
 	return d;
 }
 
