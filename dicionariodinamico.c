@@ -1,7 +1,6 @@
 #include "dicionariodinamico.h"
 #include "arraydinamico.h"
 #include "listaencadeada.h"
-#include "tupladicionario.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -12,50 +11,53 @@ typedef struct dado {
     int ocupacao;
     int fatorCarga;
     int fatorAgrupamento;
-    TCompara comparaChave;
+    int insercoesAteEvaluation;
+    TCompara comparaTupla;
     THashing hash;
-    TArrayDinamico array;
+    TArrayDinamico *array;
 } TDadoDicionarioDinamico;
 
-TDadoDicionarioDinamico* criarDado(int tam, double fc, THashing hash, TCompara comparaChave)
+TDadoDicionarioDinamico* criarDado(int tam, double fc, THashing hash, TCompara comparaTupla)
 {
+    srand(time(NULL));
     TDadoDicionarioDinamico* d = (TDadoDicionarioDinamico*)malloc(sizeof(TDadoDicionarioDinamico));
     d->tam = tam * (2.0 - fc);
     d->fatorCarga = fc;
     d->fatorAgrupamento = 0.0;
     d->hash = hash;
-    d->comparaChave = comparaChave;
+    d->comparaTupla = comparaTupla;
     d->array = criarArrayDinamico(d->tam);
     d->ocupacao = 0;
+    d->insercoesAteEvaluation = rand()%1000;
     return d;
 }
 
 
-//TODO: implementar Evaluation
-static short evaluation(TDicionario *d) {
+//TODO : implementar Evaluation
+/*static short evaluation(TDicionarioDinamico *d) {
     TDadoDicionarioDinamico *dd = d->dado;
-}
+}*/
 
-static void* buscar(TDicionario* d, int k)
+static void* buscar(TDicionarioDinamico* d, void * k)
 {
     TDadoDicionarioDinamico* dd = d->dado;
 
-    int posi = hash(k, dd->tam);
+    int posi = dd->hash(k, dd->tam);
     TLista * lista = dd->array->acessar(dd->array, posi);
-    TTuplaDicionario * tupla = criarTuplaDicionario(k, NULL);
-    void * elemento = lista->buscarComRetorno(lista, tupla);
+    TTuplaDicionario * tupla = criarTuplaDicionario(k, NULL, dd->comparaTupla);
+    TTuplaDicionario * elemento = (TTuplaDicionario*) lista->buscarComRetorno(lista, tupla);
     free(tupla);
-    
-    return elemento;
+    if(elemento == NULL) return NULL;
+    return elemento->valor;
 }
 
-static void *inserir(TDicionario *d, int k, void *e)
+static void inserir(TDicionarioDinamico *d, void * k, void *e)
 {
     TDadoDicionarioDinamico *dd = d->dado;
-    int posi = hash(k, dd->tam);
+    int posi = dd->hash(k, dd->tam);
     TLista *lista = dd->array->acessar(dd->array, posi);
-    TElemento elemento = (TElemento*)e;
-    TTuplaDicionario *tupla = criarTuplaDicionario(k, elemento);
+    TElemento *elemento = (TElemento*)e;
+    TTuplaDicionario *tupla = criarTuplaDicionario(k, elemento, dd->comparaTupla);
 
 
     if(lista == NULL) {
@@ -64,23 +66,29 @@ static void *inserir(TDicionario *d, int k, void *e)
     }
     lista->inserir(lista, tupla);
     dd->ocupacao++;
-}
-
-static void *remover(TDicionario *d, int k) {
-    TDadoDicionarioDinamico *dd = d->dado;
-    int posi = hash(k, dd->tam);
-    TLista *lista = dd->array->acessar(dd->array, posi);
-    TTuplaDicionario *tupla = criarTuplaDicionario(k, NULL);
-    if(lista != NULL) {
-        lista->remover(lista, tupla)
+    dd->insercoesAteEvaluation--;
+    if(dd->insercoesAteEvaluation == 0) {
+        // TODO : fazer evaluation
     }
 }
 
-TDicionario *criarDicionarioDinamico(int tam, THashing hash, TCompara comparaChave)
+static void remover(TDicionarioDinamico *d, void * k) {
+    TDadoDicionarioDinamico *dd = d->dado;
+    int posi = dd->hash(k, dd->tam);
+    TLista *lista = dd->array->acessar(dd->array, posi);
+    TTuplaDicionario *tupla = criarTuplaDicionario(k, NULL, dd->comparaTupla);
+    if(lista != NULL) {
+        lista->remover(lista, tupla);
+    }
+}
+
+TDicionarioDinamico *criarDicionarioDinamico(int tam, THashing hash, TCompara comparaTupla)
 {
-    TDadoDicionarioDinamico* d = criarDado(tam, 0.8, hash, comparaChave);
-    TDicionario *dict = malloc(sizeof(TDicionario));
+    TDadoDicionarioDinamico* d = criarDado(tam, 0.8, hash, comparaTupla);
+    TDicionarioDinamico *dict = malloc(sizeof(TDicionarioDinamico));
+    dict->dado = d;
     dict->buscar = buscar;
     dict->inserir = inserir;
     dict->remover = remover;
+    return dict;
 }

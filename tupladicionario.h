@@ -8,3 +8,5 @@ typedef struct {
 
 
 typedef int (*THashing)(void*, int M);
+
+TTuplaDicionario * criarTuplaDicionario(void * k, void * elem, TCompara compara);

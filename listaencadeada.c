@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "listaencadeada.h"
-#include "comparavel.h"
+#include "elemento.h"
 
 typedef struct No TNo;
 
@@ -31,7 +31,7 @@ static short Vazia(TLista *l){
     return 0;
 }
 
-static short tamanho(TLista *l) {
+static int tamanho(TLista *l) {
     TDadoLista *d = l->dado;
     return d->qtde;
 }
@@ -70,13 +70,13 @@ static void RemoverInicio(TLista *l){
 static void Remover(TLista *l, void * elem){
     TDadoLista *d = l->dado;
     TNo *no, *aux;
-    TComparavel comp = (TComparavel*)elem;
+    TComparavel *comp = (TComparavel*)elem;
 
     if(!Vazia(l)){
         aux = NULL;
         no = d->inicio;
         while(no != NULL) {
-            if(comp->compara(elem, no->elemento)) {
+            if(comp->compara(elem, no->elemento) == 0) {
                 if(d->inicio == no) {
                     d->inicio = d->inicio->proximo;
                 } else {
@@ -86,12 +86,14 @@ static void Remover(TLista *l, void * elem){
                     d->fim = aux;
                 }
                 no->proximo = NULL;
+                free(no);
+                no = NULL;
+                d->qtde--;
+            } else {
+                aux = no;
+                no = no->proximo;
             }
-            aux = no;
-            no = no->proximo;
         }
-        free(no);
-        d->qtde--;
     }
 }
 
@@ -126,7 +128,7 @@ static void * BuscaRetorno(TLista *l, void *elem) {
     aux = d->inicio;
     c1 = (TComparavel*)aux->elemento;
     while(aux != NULL){
-        if(c1->compara(aux->elemento, elem) == 0) return aux->elem;
+        if(c1->compara(aux->elemento, elem) == 0) return aux->elemento;
         aux = aux->proximo;
     }
 
@@ -136,13 +138,13 @@ static void * BuscaRetorno(TLista *l, void *elem) {
 static void Imprimir(TLista *l){
     TDadoLista *d = l->dado;
     TNo *aux;
-    TComparavel *c1;
+    TElemento *e1;
 
     if(!Vazia(l)){
             aux = d->inicio;
             while(aux != NULL){
-                c1 = (TComparavel*)aux->elemento;
-                c1->imprime(aux->elemento);
+                e1 = (TElemento*)aux->elemento;
+                e1->imprimir(aux->elemento);
                 aux = aux->proximo;
             }
     }
