@@ -44,13 +44,12 @@ static int IntegerHashing (void *k, int m)
 int main()
 {
     TInteger *a;
-    TDicionarioDinamico *dicionario = criarDicionarioDinamico(1, IntegerHashing, comparaTuplaChaveInteger);
+    TDicionarioDinamico *dicionario = criarDicionarioDinamico(100, IntegerHashing, comparaTuplaChaveInteger);
     int i;
-    for(i = 0; i < 100; i++) {
+    for(i = 0; i < 1000; i++) {
         a = criarInteger(i);
         dicionario->inserir(dicionario, &a->value, a);
     }
-
     for(i = 0; i < 100; i++) {
         a = (TInteger*)dicionario->buscar(dicionario, &i);
         a->imprimir(a);
@@ -65,4 +64,6 @@ int main()
             printf("o numero %d nao esta no dicionario mais!!\n",i);
         }
     }
+    system("pause");
+    return 0;
 }

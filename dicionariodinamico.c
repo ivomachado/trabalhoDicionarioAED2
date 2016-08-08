@@ -28,15 +28,31 @@ TDadoDicionarioDinamico* criarDado(int tam, double fc, THashing hash, TCompara c
     d->comparaTupla = comparaTupla;
     d->array = criarArrayDinamico(d->tam);
     d->ocupacao = 0;
-    d->insercoesAteEvaluation = rand()%1000;
+    d->insercoesAteEvaluation = rand()%100;
     return d;
 }
 
-
-//TODO : implementar Evaluation
-/*static short evaluation(TDicionarioDinamico *d) {
+static double evaluationDicionario(TDicionarioDinamico *d) {
     TDadoDicionarioDinamico *dd = d->dado;
-}*/
+    int groups = sqrt(dd->tam), i,j;
+    double fatorAgrupamento = 0.0;
+    TLista *lista;
+    int pos;
+    for(i = 0; i < groups; i++) {
+        j = 0;
+        do {
+            pos = rand()%groups + groups*i + j;
+            pos = pos%groups*(i+1);
+            j++;
+            lista = (TLista*)dd->array->acessar(dd->array,pos);
+        } while(lista == NULL);
+        fatorAgrupamento += lista->tamanho(lista);
+    }
+    fatorAgrupamento /= groups;
+    fatorAgrupamento -= dd->fatorCarga;
+    dd->fatorAgrupamento = fatorAgrupamento;
+    return fatorAgrupamento;
+}
 
 static void* buscar(TDicionarioDinamico* d, void * k)
 {
@@ -68,7 +84,9 @@ static void inserir(TDicionarioDinamico *d, void * k, void *e)
     dd->ocupacao++;
     dd->insercoesAteEvaluation--;
     if(dd->insercoesAteEvaluation == 0) {
-        // TODO : fazer evaluation
+        dd->insercoesAteEvaluation = rand()%100;
+        evaluationDicionario(d);
+        // TODO : fazer rehash
     }
 }
 
