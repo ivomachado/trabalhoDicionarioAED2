@@ -1,7 +1,5 @@
 #include "dicionariosemiestatico.h"
-#include "comparavel.h"
 #include "arraydinamico.h"
-#include "tupladicionario.h"
 
 #include <time.h>
 #include <math.h>
@@ -26,10 +24,11 @@ typedef struct {
     double fatorCarga;
     int insercoesAteEvaluation;
     TAnalytics analytics;
+    short rehashEnabled;
 }TDadoDicionarioSE;
 
 
-static void Evaluation(TDicionarioSE *dc){
+static void Evaluation(TDicionarioSemiEstatico *dc){
     TDadoDicionarioSE *d = dc->dado;
     int posc, posi, i;
     TComparavel *elemento;
@@ -53,40 +52,42 @@ static void Evaluation(TDicionarioSE *dc){
     }while(amostras);
     n = sqrt(d->tamanho);
     d->fatorAgrupamento = sumXi/(float)(n-1) - d->fatorCarga;
+    d->insercoesAteEvaluation = rand() % 1000;
 }
 
-// static int HashDicionario(TDicionarioSE *dc, void *k, int tam){
+// static int HashDicionario(TDicionarioSemiEstatico *dc, void *k, int tam){
 //     TDadoDicionarioSE *
 //
 //    return dc->dado->hash;
 //}
-
-static void Rehashing(TDicionarioSE *dc){
+static void Rehashing(TDicionarioSemiEstatico *dc){
     TDadoDicionarioSE *d = dc->dado;
     int novoTam = 2*d->tamanho*(2.0-d->fatorCarga);
     TArrayDinamico *novoDicionario = criarArrayDinamico(novoTam);
     TArrayDinamico *dic = d->dicionario;
     TTuplaDicionario *tupla;
-    int i = 0, tam = d->tamanho;
+    int i, tam = d->tamanho;
 
-    free(d->dicionario);
     d->dicionario = novoDicionario;
     d->tamanho = novoTam;
 
-    //tupla = (TTuplaDicionario*)d->dicionario->acessar(d->dicionario, i);
-    tupla = (TTuplaDicionario*)dic->acessar(dic, i);
+    d->rehashEnabled = 0;
 
-    while(i < tam){
+    for(i = 0; i < tam; i++){
+        tupla = (TTuplaDicionario*)dic->acessar(dic, i);
+        if(tupla != NULL) {
+            d->insercoesAteEvaluation++;
             dc->inserir(dc, tupla->chave, tupla->valor);
             d->analytics.movimentou++;
-            i++;
-            tupla = (TTuplaDicionario*)dic->acessar(dic, i);
+            free(tupla);
+        }
     }
+    free(dic);
     d->analytics.sobrecarregou++;
-
+    d->rehashEnabled = 1;
 }
 
-static void Inserir(TDicionarioSE *dc, void* k, void *elemento){
+static void Inserir(TDicionarioSemiEstatico *dc, void* k, void *elemento){
     TDadoDicionarioSE *d = dc->dado;
     int posi, posc, i = 1;
     int tentativas = d->tamanho;
@@ -101,48 +102,52 @@ static void Inserir(TDicionarioSE *dc, void* k, void *elemento){
         tentativas--;
     }
     if(tentativas == 0){
-        //re-hashing
-        //incializar os dados;
+        //d->dicionario[posc] = tupla;
         Rehashing(dc);
-    }
-    //d->dicionario[posc] = tupla;
-    d->dicionario->atualizar(d->dicionario, posc, tupla);
-    d->analytics.inseriu++;
-    d->insercoesAteEvaluation--;
-
-    if(d->insercoesAteEvaluation == 0){
+        free(tupla);
         Evaluation(dc);
-        if(d->fatorAgrupamento > 1.0) Rehashing(dc);
+        dc->inserir(dc, k, elemento);
+    } else {
+        d->dicionario->atualizar(d->dicionario, posc, tupla);
+        d->analytics.inseriu++;
+        d->insercoesAteEvaluation--;
 
+        if(d->insercoesAteEvaluation == 0){
+            Evaluation(dc);
+            if(d->fatorAgrupamento > 1.0 && d->rehashEnabled) Rehashing(dc);
+
+        }
+        
     }
 }
 
 
 
-static void* Buscar(TDicionarioSE *dc, void* k){
+static void* Buscar(TDicionarioSemiEstatico *dc, void* k){
     TDadoDicionarioSE *d = dc->dado;
     TComparavel *elemento = NULL;
     int posi, posc, i = 0;
-    TTuplaDicionario *tupla;
+    TTuplaDicionario *aux_tupla = criarTuplaDicionario(k, NULL, d->comparaTupla);
 
     posi = d->hashd(k, d->tamanho);
     posc = posi;
 
     do{
 
-        i++;
         posc = (posi+i) %d->tamanho;
+        i++;
         //elemento = (TComparavel*)d->dicionario[posc];
-         elemento = (TComparavel*)d->dicionario->acessar(d->dicionario, posc);
-         tupla = d->dicionario->acessar(d->dicionario, posc);
+        elemento = (TComparavel*)d->dicionario->acessar(d->dicionario, posc);
 
-    }while(elemento != NULL && elemento->compara(tupla->chave, k) != 0);
+    }while(elemento != NULL && elemento->compara(elemento, aux_tupla) != 0);
     //while(elemento != NULL && elemento->compara(&(d->dicionario[posc]->dado->chave), &k) != 0);
 
-    return elemento;
+    if(elemento != NULL)
+        return ((TTuplaDicionario*)elemento)->valor;
+    else return NULL;
 }
 
-static void Analytics (TDicionarioSE *dc){
+static void Analytics (TDicionarioSemiEstatico *dc){
     TDadoDicionarioSE *d = dc->dado;
 
     printf("\nInseriu: %d", d->analytics.inseriu);
@@ -169,6 +174,7 @@ static TDadoDicionarioSE* criarDadoDicionarioSE(int tam, double fc,  THashing ha
     d->analytics.removeu = 0;
     d->analytics.sobrecarregou = 0;
     d->analytics.movimentou = 0;
+    d->rehashEnabled = 1;
 
     //armazena os elementos. Pode usar arraydinamico
     d->dicionario = criarArrayDinamico(d->tamanho);
@@ -176,8 +182,8 @@ static TDadoDicionarioSE* criarDadoDicionarioSE(int tam, double fc,  THashing ha
 
 }
 
-TDicionarioSE* criarDicioanarioSE(int tam, THashing hashD, TCompara comparaTuplaD){
-    TDicionarioSE *dc = (TDicionarioSE*)malloc(sizeof(TDicionarioSE));
+TDicionarioSemiEstatico* criarDicionarioSemiEstatico(int tam, THashing hashD, TCompara comparaTuplaD){
+    TDicionarioSemiEstatico *dc = (TDicionarioSemiEstatico*)malloc(sizeof(TDicionarioSemiEstatico));
 
     dc->dado = criarDadoDicionarioSE(tam, 0.8, hashD, comparaTuplaD);
 

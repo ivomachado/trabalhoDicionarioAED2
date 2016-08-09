@@ -1,10 +1,12 @@
-typedef struct dicionario TDicionarioSE;
+#include "tupladicionario.h"
 
-typedef void (*TInserirDicionario)(TDicionarioSE*, void*, void*);
-typedef void* (*TBuscarDicionario)(TDicionarioSE*, void*);
-typedef void (*TAnalyticsDicionario) (TDicionarioSE*);
+typedef struct dicionario TDicionarioSemiEstatico;
 
-TDicionarioSE* criarDicioanarioSE();
+typedef void (*TInserirDicionario)(TDicionarioSemiEstatico*, void*, void*);
+typedef void* (*TBuscarDicionario)(TDicionarioSemiEstatico*, void*);
+typedef void (*TAnalyticsDicionario) (TDicionarioSemiEstatico*);
+
+TDicionarioSemiEstatico* criarDicionarioSemiEstatico(int tam, THashing hashD, TCompara comparaTuplaD);
 
 struct dicionario{
     void *dado;
