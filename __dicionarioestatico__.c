@@ -36,27 +36,24 @@ static int comparaTuplaChaveInteger(void *a, void *b)
     return c - d;
 }
 
-static int IntegerHashing (void *k, int m)
-{
-    return *((int*)k) % m;
-}
-
 int main()
 {
-    TInteger *a;
-    TInteger *array[1000];
+    int *a;
+    int *array[1000];
     int *keys[1000], *key;
     TDicionarioEstatico *dicionario;
     int i;
     for(i = 0; i < 1000; i++) {
-        array[i] = criarInteger(i);
+        // array[i] = criarInteger(i);
         key = (int*)malloc(sizeof(int)); *key = i;
         keys[i] = key;
+        array[i] = key;
     }
     dicionario = criarDicionarioEstatico((void**)keys, (void**)array, 1000, comparaTuplaChaveInteger);
     for(i = 0; i < 1000; i++) {
-        a = (TInteger*)dicionario->buscar(dicionario, &i);
-        a->imprimir(a);
+        a = (int*)dicionario->buscar(dicionario, &i);
+        // a->imprimir(a);
+        printf("%d\n", *a);
     }
     system("pause");
     return 0;
