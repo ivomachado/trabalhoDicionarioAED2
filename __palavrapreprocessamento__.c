@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 int main() {
-    TPalavraProcessamento *palavra = criarPalavraProcessamento("ivo");
+    TPalavraProcessamento *palavra = criarPalavraProcessamento();
 
     printf("%d\n", palavra->incrementarPagina(palavra, 30));
     printf("%d\n", palavra->incrementarPagina(palavra, 20));

@@ -12,11 +12,12 @@ typedef struct {
 
 static int *getOcorrenciasPagina(TPalavraProcessamento *palavra, int pag) {
     TDadoPalavraPreprocessamento *d = (TDadoPalavraPreprocessamento*)palavra->dado;
-    int *k = (int*)malloc(sizeof(int));
+    int *k; 
     int *ocorrencias;
-    *k = pag;
-    ocorrencias = d->paginas->buscar(d->paginas, k);
+    ocorrencias = d->paginas->buscar(d->paginas, &pag);
     if(ocorrencias == NULL) {
+        k = (int*)malloc(sizeof(int));
+        *k = pag;
         ocorrencias = calloc(1, sizeof(int));
         d->paginas->inserir(d->paginas, k, ocorrencias);
     }
@@ -50,18 +51,16 @@ static int ocorrenciasTotais(TPalavraProcessamento *palavra) {
     return d->ocorrenciasGlobais;
 }
 
-TDadoPalavraPreprocessamento * criarDadoPalavraPreprocessamento(char *palavra) {
+TDadoPalavraPreprocessamento * criarDadoPalavraPreprocessamento() {
     TDadoPalavraPreprocessamento *d = (TDadoPalavraPreprocessamento*)malloc(sizeof(TDadoPalavraPreprocessamento));
-    d->palavra = (char*)malloc(sizeof(strlen(palavra)+1));
-    strcpy(d->palavra, palavra);
     d->paginas = criarDicionarioSemiEstatico(50, intHashing, comparaTuplaChaveInteger);
     d->ocorrenciasGlobais = 0;
     return d;
 }
 
-TPalavraProcessamento * criarPalavraProcessamento(char * palavra) {
+TPalavraProcessamento * criarPalavraProcessamento() {
     TPalavraProcessamento *p = (TPalavraProcessamento*)malloc(sizeof(TPalavraProcessamento));
-    p->dado = criarDadoPalavraPreprocessamento(palavra);
+    p->dado = criarDadoPalavraPreprocessamento();
     p->incrementarPagina = incrementarPagina;
     p->decrementarPagina = decrementarPagina;
     p->ocorrenciasPagina = ocorrenciasPagina;
