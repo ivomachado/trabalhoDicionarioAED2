@@ -28,7 +28,6 @@ TDadoStopWordManager * criarDadoStopWordManager() {
         stop_words[word_count++] = aux;
     }
     d->dict = criarDicionarioEstatico(stop_words, stop_words, word_count, comparaTuplaString);
-    free(stop_words);
     return d;
 }
 
