@@ -6,15 +6,16 @@
  */
 
 //funcao que le as palavras do arquivo;
-#include "string.h"
 #include "parser.h"
+#include <string.h>
+#include <ctype.h>
 
 int lerPalavra(FILE *fp, char *word)
 {
 	short typing=1;
 
 	//auxiliares do tipo char;
-	char *del = " \t\r\n`~!@#$%^&*()-_+=\\|][{}'\":;/?.>,<\"1234567890";
+	char *del = " \t\r\n`~!@#$%^&*()-_+=\\|][{}'\":;/?.>,<\"1234567890“”ª";
 
 	int i = 0; word[i] = '\0';
 	do{
