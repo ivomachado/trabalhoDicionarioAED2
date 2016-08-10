@@ -1,4 +1,5 @@
 #include "dicionarioestatico.h"
+#include "primitivodicionarioutils.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -27,13 +28,6 @@ TInteger * criarInteger(int value)
     a->imprimir = imprimirInteger;
     a->compara = comparaInteger;
     return a;
-}
-
-static int comparaTuplaChaveInteger(void *a, void *b)
-{
-    int c = *((int*)((TTuplaDicionario*)a)->chave);
-    int d = *((int*)((TTuplaDicionario*)b)->chave);
-    return c - d;
 }
 
 int main()

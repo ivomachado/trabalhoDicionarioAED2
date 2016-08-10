@@ -1,4 +1,5 @@
 #include "dicionariosemiestatico.h"
+#include "primitivodicionarioutils.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -29,22 +30,10 @@ TInteger * criarInteger(int value)
     return a;
 }
 
-static int comparaTuplaChaveInteger(void *a, void *b)
-{
-    int c = *((int*)((TTuplaDicionario*)a)->chave);
-    int d = *((int*)((TTuplaDicionario*)b)->chave);
-    return c - d;
-}
-
-static int IntegerHashing (void *k, int m)
-{
-    return *((int*)k) % m;
-}
-
 int main()
 {
     TInteger *a;
-    TDicionarioSemiEstatico *dicionario = criarDicionarioSemiEstatico(50, IntegerHashing, comparaTuplaChaveInteger);
+    TDicionarioSemiEstatico *dicionario = criarDicionarioSemiEstatico(50, intHashing, comparaTuplaChaveInteger);
     int i;
     for(i = 0; i < 1000; i++) {
         a = criarInteger(i);
