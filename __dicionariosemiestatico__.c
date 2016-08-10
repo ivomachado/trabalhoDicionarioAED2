@@ -39,6 +39,8 @@ int main()
         a = criarInteger(i);
         dicionario->inserir(dicionario, &(a->value), a);
     }
+    a = (TInteger*)dicionario->buscarIndice(dicionario, 0);
+    a->imprimir(a);
     for(i = 0; i < 1000; i++) {
         a = (TInteger*)dicionario->buscar(dicionario, &i);
         a->imprimir(a);

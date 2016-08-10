@@ -121,6 +121,12 @@ static void Inserir(TDicionarioSemiEstatico *dc, void* k, void *elemento){
     }
 }
 
+static void* buscarIndice(TDicionarioSemiEstatico *dc, int pos) {
+    TDadoDicionarioSE *d = dc->dado;
+    void * a = d->dicionario->acessar(d->dicionario, pos);
+    if(a == NULL) return NULL;
+    else return ((TTuplaDicionario*)a)->valor;
+}
 
 
 static void* Buscar(TDicionarioSemiEstatico *dc, void* k){
@@ -190,7 +196,7 @@ TDicionarioSemiEstatico* criarDicionarioSemiEstatico(int tam, THashing hashD, TC
     dc->inserir = Inserir;
     dc->buscar = Buscar;
     dc->analytics = Analytics;
-
+    dc->buscarIndice = buscarIndice;
 
     return dc;
 }
