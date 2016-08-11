@@ -27,8 +27,8 @@ int main(int argc, char **argv) {
                 if(strcmp(palavra,"pa") == 0) {
                     pag++;
                 } else {
-                    iter++;
-                    if(!stop->isStopWord(stop, palavra) || strlen(palavra) > 0) {
+                    if(!stop->isStopWord(stop, palavra) && strlen(palavra) > 0) {
+                        iter++;
                         preprocessador->incrementarPaginaPalavra(preprocessador, palavra, pag);
                         printf("%s: %d pag %d iter %d\n", palavra, preprocessador->ocorrenciaPaginaPalavra(preprocessador, palavra, pag), pag, iter);
                     }

@@ -9,7 +9,7 @@
 
 typedef struct {
     TDicionarioSemiEstatico *palavras;
-    TArrayDinamico * ocorrenciasTotaisPaginas
+    TArrayDinamico * ocorrenciasTotaisPaginas;
     int totalPalavras;
     int totalPaginas;
 } TDadoPreprocessamento;
@@ -31,7 +31,7 @@ static int * getTotalOcorrenciasPagina(TDadoPreprocessamento *d, int pag)
     int * ocorrencias = (int*)d->ocorrenciasTotaisPaginas->acessar(d->ocorrenciasTotaisPaginas, pag - 1);
     if(ocorrencias == NULL) {
         ocorrencias = (int*)malloc(sizeof(int));
-        d->ocorrenciasTotaisPaginas->atualizar(d->ocorrenciasTotaisPaginas, ocorrencias, pag - 1);
+        d->ocorrenciasTotaisPaginas->atualizar(d->ocorrenciasTotaisPaginas, pag - 1, ocorrencias);
     }
     return ocorrencias;
 }
@@ -39,7 +39,7 @@ static int * getTotalOcorrenciasPagina(TDadoPreprocessamento *d, int pag)
 static int incrementarPaginaPalavra(TPreprocessamento * p, char * palavra, int pag) {
     TDadoPreprocessamento *d = (TDadoPreprocessamento*)p->dado;
     TPalavraProcessamento *palavrapreprocessamento = getPalavraPreprocessamento(d, palavra);
-    int *totalPagina = *getTotalOcorrenciasPagina(d, pag);
+    int *totalPagina = getTotalOcorrenciasPagina(d, pag);
     *totalPagina += 1;
     d->totalPalavras++;
     d->totalPaginas = fmax(d->totalPaginas, pag);
@@ -47,12 +47,14 @@ static int incrementarPaginaPalavra(TPreprocessamento * p, char * palavra, int p
 }
 
 static int ocorrenciaPaginaPalavra(TPreprocessamento * p, char * palavra, int pag) {
-    TPalavraProcessamento *palavrapreprocessamento = getPalavraPreprocessamento(p, palavra);
+    TDadoPreprocessamento *d = (TDadoPreprocessamento*)p->dado;
+    TPalavraProcessamento *palavrapreprocessamento = getPalavraPreprocessamento(d, palavra);
     return palavrapreprocessamento->ocorrenciasPagina(palavrapreprocessamento, pag);
 }
 
 static int ocorrenciaTotalPalavra(TPreprocessamento * p, char * palavra) {
-    TPalavraProcessamento *palavrapreprocessamento = getPalavraPreprocessamento(p, palavra);
+    TDadoPreprocessamento *d = (TDadoPreprocessamento*)p->dado;
+    TPalavraProcessamento *palavrapreprocessamento = getPalavraPreprocessamento(d, palavra);
     return palavrapreprocessamento->ocorrenciasTotais(palavrapreprocessamento);
 }
 
@@ -77,15 +79,18 @@ TDadoPreprocessamento * criarDadoPreprocessamento() {
     d->palavras = criarDicionarioSemiEstatico(150, stringHashing, comparaTuplaString);
     d->totalPaginas = 0;
     d->totalPalavras = 0;
+    d->ocorrenciasTotaisPaginas = criarArrayDinamico(200);
     return d;
 } 
 
 TPreprocessamento * criarPreprocessamento() {
     TPreprocessamento *p = (TPreprocessamento*)malloc(sizeof(TPreprocessamento));
     p->dado = criarDadoPreprocessamento();
-    p->paginas = criarArrayDinamico(200);
     p->incrementarPaginaPalavra = incrementarPaginaPalavra;
     p->ocorrenciaPaginaPalavra = ocorrenciaPaginaPalavra;
     p->ocorrenciaTotalPalavra = ocorrenciaTotalPalavra;
+    p->TFIDF = TFIDF;
+    p->TF = TF;
+    p->IDF = IDF;
     return p;
 }

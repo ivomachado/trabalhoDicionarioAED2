@@ -145,7 +145,7 @@ static void* Buscar(TDicionarioSemiEstatico *dc, void* k){
         //elemento = (TComparavel*)d->dicionario[posc];
         elemento = (TComparavel*)d->dicionario->acessar(d->dicionario, posc);
 
-    }while(elemento != NULL && elemento->compara(elemento, aux_tupla) != 0);
+    }while(elemento != NULL && elemento->compara(elemento, aux_tupla) != 0 && i < d->tamanho);
     //while(elemento != NULL && elemento->compara(&(d->dicionario[posc]->dado->chave), &k) != 0);
 
     if(elemento != NULL)
