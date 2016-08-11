@@ -90,7 +90,7 @@ static void Rehashing(TDicionarioSemiEstatico *dc){
 static void Inserir(TDicionarioSemiEstatico *dc, void* k, void *elemento){
     TDadoDicionarioSE *d = dc->dado;
     int posi, posc, i = 1;
-    int tentativas = d->tamanho;
+    int tentativas = log(d->tamanho);
     TTuplaDicionario *tupla = criarTuplaDicionario(k, elemento, d->comparaTupla);
 
     posi = d->hashd(k, d->tamanho);
@@ -133,6 +133,7 @@ static void* Buscar(TDicionarioSemiEstatico *dc, void* k){
     TDadoDicionarioSE *d = dc->dado;
     TComparavel *elemento = NULL;
     int posi, posc, i = 0;
+    int log_tamanho = log(d->tamanho);
     TTuplaDicionario *aux_tupla = criarTuplaDicionario(k, NULL, d->comparaTupla);
 
     posi = d->hashd(k, d->tamanho);
@@ -145,10 +146,10 @@ static void* Buscar(TDicionarioSemiEstatico *dc, void* k){
         //elemento = (TComparavel*)d->dicionario[posc];
         elemento = (TComparavel*)d->dicionario->acessar(d->dicionario, posc);
 
-    }while(elemento != NULL && elemento->compara(elemento, aux_tupla) != 0 && i < d->tamanho);
+    }while(elemento != NULL && elemento->compara(elemento, aux_tupla) != 0 && i < log_tamanho);
     //while(elemento != NULL && elemento->compara(&(d->dicionario[posc]->dado->chave), &k) != 0);
 
-    if(elemento != NULL)
+    if(elemento != NULL && i < log_tamanho)
         return ((TTuplaDicionario*)elemento)->valor;
     else return NULL;
 }
