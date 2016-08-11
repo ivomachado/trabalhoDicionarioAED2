@@ -18,7 +18,9 @@ static void** ajustar(void *_add, int novoTamanho){
 }
 static void* acessar(TArrayDinamico* ad, int pos){
 	TDado *dado = ad->dado;
-	return dado->_dado[pos];
+	if(pos >= 0 && pos < dado->tamanho)
+		return dado->_dado[pos];
+	return NULL;
 }
 static void atualizar(TArrayDinamico* ad, int pos, void* elemento){
 	TDado *d = ad->dado;
