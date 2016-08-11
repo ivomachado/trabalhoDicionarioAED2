@@ -10,7 +10,7 @@ typedef struct {
 
 static void * buscar(TDicionarioEstatico *dict, void *k) {
     TDadoDicionarioEstatico *d = (TDadoDicionarioEstatico*)dict->dado;
-    int ini = 0, fim = d->tam;
+    int ini = 0, fim = d->tam - 1;
     int meio, resultadoComparacao;
     TTuplaDicionario *comp;
     TTuplaDicionario *tupla = criarTuplaDicionario(k, NULL, d->comparaTupla);
