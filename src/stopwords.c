@@ -1,7 +1,7 @@
 #include "stopwords.h"
 #include "dicionarioestatico.h"
 #include "primitivodicionarioutils.h"
-#include "parser.h"
+#include "parserpalavra.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>

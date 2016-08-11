@@ -6,7 +6,7 @@
  */
 
 //funcao que le as palavras do arquivo;
-#include "parser.h"
+#include "parserpalavra.h"
 #include <string.h>
 #include <ctype.h>
 

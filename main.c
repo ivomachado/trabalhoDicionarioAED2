@@ -1,12 +1,8 @@
 #include "preprocessamento.h"
 #include "stopwords.h"
-#include "parser.h"
+#include "parserpalavra.h"
 #include <stdio.h>
 #include <string.h>
-
-void preprocessamento(FILE *fp) {
-    
-}
 
 int main(int argc, char **argv) {
     FILE *livro;
