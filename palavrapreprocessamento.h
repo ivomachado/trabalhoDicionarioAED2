@@ -8,7 +8,7 @@ TPalavraProcessamento * criarPalavraProcessamento();
 struct palavraprocessamento {
     void * dado;
     TManipulacaoOcorrencia incrementarPagina;
-    TManipulacaoOcorrencia decrementarPagina;
     TManipulacaoOcorrencia ocorrenciasPagina;
     TOcorrenciasTotal ocorrenciasTotais;
+    TOcorrenciasTotal numeroPaginas;
 };

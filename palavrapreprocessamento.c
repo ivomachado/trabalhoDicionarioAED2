@@ -7,43 +7,36 @@
 typedef struct {
     char * palavra;
     TDicionarioSemiEstatico *paginas;
+    int numeroPaginas;
     int ocorrenciasGlobais;
 }TDadoPalavraPreprocessamento;
 
-static int *getOcorrenciasPagina(TPalavraProcessamento *palavra, int pag) {
+static int *getOcorrenciasPagina(TPalavraProcessamento *palavra, int pag, int criar) {
     TDadoPalavraPreprocessamento *d = (TDadoPalavraPreprocessamento*)palavra->dado;
     int *k; 
-    int *ocorrencias;
-    ocorrencias = d->paginas->buscar(d->paginas, &pag);
-    if(ocorrencias == NULL) {
+    int *ocorrencias = d->paginas->buscar(d->paginas, &pag);
+    if(ocorrencias == NULL && criar) {
         k = (int*)malloc(sizeof(int));
         *k = pag;
         ocorrencias = calloc(1, sizeof(int));
         d->paginas->inserir(d->paginas, k, ocorrencias);
+        d->numeroPaginas++;
     }
     return ocorrencias;
 }
 
 static int incrementarPagina(TPalavraProcessamento *palavra, int pag) {
     TDadoPalavraPreprocessamento *d = (TDadoPalavraPreprocessamento*)palavra->dado;
-    int *ocorrencias = getOcorrenciasPagina(palavra, pag);
+    int *ocorrencias = getOcorrenciasPagina(palavra, pag, 1);
     *ocorrencias += 1;
     d->ocorrenciasGlobais++;
     return *ocorrencias;
 }
 
-static int decrementarPagina(TPalavraProcessamento *palavra, int pag) {
-    TDadoPalavraPreprocessamento *d = (TDadoPalavraPreprocessamento*)palavra->dado;
-    int *ocorrencias = getOcorrenciasPagina(palavra, pag);
-    if(*ocorrencias > 0) {
-        *ocorrencias -= 1;
-        d->ocorrenciasGlobais--;
-    }
-    return *ocorrencias;
-}
-
 static int ocorrenciasPagina(TPalavraProcessamento *palavra, int pag) {
-    return *getOcorrenciasPagina(palavra, pag);
+    int * resultado = getOcorrenciasPagina(palavra, pag, 0); 
+    if(resultado != NULL) return *resultado;
+    else return 0;
 }
 
 static int ocorrenciasTotais(TPalavraProcessamento *palavra) {
@@ -51,9 +44,15 @@ static int ocorrenciasTotais(TPalavraProcessamento *palavra) {
     return d->ocorrenciasGlobais;
 }
 
+static int numeroPaginas(TPalavraProcessamento *palavra) {
+    TDadoPalavraPreprocessamento *d = (TDadoPalavraPreprocessamento*)palavra->dado;
+    return d->numeroPaginas;
+}
+
 TDadoPalavraPreprocessamento * criarDadoPalavraPreprocessamento() {
     TDadoPalavraPreprocessamento *d = (TDadoPalavraPreprocessamento*)malloc(sizeof(TDadoPalavraPreprocessamento));
     d->paginas = criarDicionarioSemiEstatico(50, intHashing, comparaTuplaChaveInteger);
+    d->numeroPaginas = 0;
     d->ocorrenciasGlobais = 0;
     return d;
 }
@@ -62,8 +61,8 @@ TPalavraProcessamento * criarPalavraProcessamento() {
     TPalavraProcessamento *p = (TPalavraProcessamento*)malloc(sizeof(TPalavraProcessamento));
     p->dado = criarDadoPalavraPreprocessamento();
     p->incrementarPagina = incrementarPagina;
-    p->decrementarPagina = decrementarPagina;
     p->ocorrenciasPagina = ocorrenciasPagina;
     p->ocorrenciasTotais = ocorrenciasTotais;
+    p->numeroPaginas = numeroPaginas;
     return p;
 }
