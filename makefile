@@ -1,4 +1,4 @@
-CFLAGS = -Wall -g -fms-extensions
+CFLAGS = -Wall -g -fms-extensions -std=c99 -lm
 SRC=$(wildcard *.c)
 HEADERS=$(wildcard *.h)
 MAIN_SRC = $(filter-out $(wildcard __*__.c), $(SRC))
