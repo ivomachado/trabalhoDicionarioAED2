@@ -15,6 +15,7 @@ typedef struct dado {
     TCompara comparaTupla;
     THashing hash;
     TArrayDinamico *array;
+    int rehashEnabled;
 } TDadoDicionarioDinamico;
 
 TDadoDicionarioDinamico* criarDado(int tam, double fc, THashing hash, TCompara comparaTupla)
@@ -29,7 +30,31 @@ TDadoDicionarioDinamico* criarDado(int tam, double fc, THashing hash, TCompara c
     d->array = criarArrayDinamico(d->tam);
     d->ocupacao = 0;
     d->insercoesAteEvaluation = rand()%100;
+    d->rehashEnabled = 1;
     return d;
+}
+
+static void rehash(TDicionarioDinamico *dict) {
+    TDadoDicionarioDinamico *d = (TDadoDicionarioDinamico*)dict->dado;
+    int tam = d->tam, i;
+    TArrayDinamico *old_dict = d->array, *new_dict = criarArrayDinamico(tam*d->fatorAgrupamento);
+    TLista *lista;
+    TTuplaDicionario *tupla;
+    d->tam *= d->fatorAgrupamento;
+    d->array = new_dict;
+    d->ocupacao = 0;
+    for(i = 0; i < tam; i++) {
+        lista = (TLista*)old_dict->acessar(old_dict, i);
+        if(lista != NULL) {
+            while(!lista->vazia(lista)) {
+                tupla = (TTuplaDicionario*)lista->removerInicio(lista);
+                d->insercoesAteEvaluation++;    
+                dict->inserir(dict, tupla->chave, tupla->valor);
+                free(tupla);
+            }
+            free(lista);
+        }
+    }
 }
 
 static double evaluationDicionario(TDicionarioDinamico *d) {
@@ -86,7 +111,12 @@ static void inserir(TDicionarioDinamico *d, void * k, void *e)
     if(dd->insercoesAteEvaluation == 0) {
         dd->insercoesAteEvaluation = rand()%100;
         evaluationDicionario(d);
-        // TODO : fazer rehash
+        if(dd->fatorAgrupamento > 5.0 && dd->rehashEnabled) {
+            dd->rehashEnabled = 0;
+            rehash(d);
+            evaluationDicionario(d);
+            dd->rehashEnabled = 1;
+        }
     }
 }
 
@@ -108,5 +138,6 @@ TDicionarioDinamico *criarDicionarioDinamico(int tam, THashing hash, TCompara co
     dict->buscar = buscar;
     dict->inserir = inserir;
     dict->remover = remover;
+    dict->evaluation = evaluationDicionario;
     return dict;
 }
