@@ -9,7 +9,7 @@ typedef struct {
     int ocorrenciasGlobais;
 }TDadoPalavraPreprocessamento;
 
-static int *getOcorrenciasPagina(TPalavraProcessamento *palavra, int pag, int criar) {
+static int *getOcorrenciasPagina(TPalavraPreprocessamento *palavra, int pag, int criar) {
     TDadoPalavraPreprocessamento *d = (TDadoPalavraPreprocessamento*)palavra->dado;
     int *k; 
     int *ocorrencias = d->paginas->buscar(d->paginas, &pag);
@@ -22,7 +22,7 @@ static int *getOcorrenciasPagina(TPalavraProcessamento *palavra, int pag, int cr
     return ocorrencias;
 }
 
-static int incrementarPagina(TPalavraProcessamento *palavra, int pag) {
+static int incrementarPagina(TPalavraPreprocessamento *palavra, int pag) {
     TDadoPalavraPreprocessamento *d = (TDadoPalavraPreprocessamento*)palavra->dado;
     int *ocorrencias = getOcorrenciasPagina(palavra, pag, 1);
     *ocorrencias += 1;
@@ -30,23 +30,23 @@ static int incrementarPagina(TPalavraProcessamento *palavra, int pag) {
     return *ocorrencias;
 }
 
-static int ocorrenciasPagina(TPalavraProcessamento *palavra, int pag) {
+static int ocorrenciasPagina(TPalavraPreprocessamento *palavra, int pag) {
     int * resultado = getOcorrenciasPagina(palavra, pag, 0); 
     if(resultado != NULL) return *resultado;
     else return 0;
 }
 
-static int ocorrenciasTotais(TPalavraProcessamento *palavra) {
+static int ocorrenciasTotais(TPalavraPreprocessamento *palavra) {
     TDadoPalavraPreprocessamento *d = (TDadoPalavraPreprocessamento*)palavra->dado;
     return d->ocorrenciasGlobais;
 }
 
-static int numeroPaginas(TPalavraProcessamento *palavra) {
+static int numeroPaginas(TPalavraPreprocessamento *palavra) {
     TDadoPalavraPreprocessamento *d = (TDadoPalavraPreprocessamento*)palavra->dado;
     return d->paginas->ocupacao(d->paginas);
 }
 
-static int ** listarPaginas(TPalavraProcessamento *palavra) {
+static int ** listarPaginas(TPalavraPreprocessamento *palavra) {
     TDadoPalavraPreprocessamento *d = (TDadoPalavraPreprocessamento*)palavra->dado;
     return (int**) d->paginas->listarChaves(d->paginas);
 }
@@ -58,8 +58,8 @@ TDadoPalavraPreprocessamento * criarDadoPalavraPreprocessamento() {
     return d;
 }
 
-TPalavraProcessamento * criarPalavraProcessamento() {
-    TPalavraProcessamento *p = (TPalavraProcessamento*)malloc(sizeof(TPalavraProcessamento));
+TPalavraPreprocessamento * criarPalavraProcessamento() {
+    TPalavraPreprocessamento *p = (TPalavraPreprocessamento*)malloc(sizeof(TPalavraPreprocessamento));
     p->dado = criarDadoPalavraPreprocessamento();
     p->incrementarPagina = incrementarPagina;
     p->ocorrenciasPagina = ocorrenciasPagina;

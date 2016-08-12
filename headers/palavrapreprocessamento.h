@@ -1,10 +1,10 @@
-typedef struct palavraprocessamento TPalavraProcessamento;
+typedef struct palavraprocessamento TPalavraPreprocessamento;
 
-typedef int (*TOcorrenciasTotal)(TPalavraProcessamento*);
-typedef int (*TManipulacaoOcorrencia)(TPalavraProcessamento*, int);
-typedef int** (*TListarPaginas)(TPalavraProcessamento*);
+typedef int (*TOcorrenciasTotal)(TPalavraPreprocessamento*);
+typedef int (*TManipulacaoOcorrencia)(TPalavraPreprocessamento*, int);
+typedef int** (*TListarPaginas)(TPalavraPreprocessamento*);
 
-TPalavraProcessamento * criarPalavraProcessamento();
+TPalavraPreprocessamento * criarPalavraProcessamento();
 
 struct palavraprocessamento {
     void * dado;
