@@ -33,7 +33,7 @@ static void Evaluation(TDicionarioSemiEstatico *dc){
     TDadoDicionarioSE *d = dc->dado;
     int posc, posi, i;
     TComparavel *elemento;
-    float sumXi = 0, Xi;
+    double sumXi = 0, Xi;
     int n, amostras = sqrt(d->tamanho);
 
     srand(time(NULL));
@@ -52,7 +52,7 @@ static void Evaluation(TDicionarioSemiEstatico *dc){
 
     }while(amostras);
     n = sqrt(d->tamanho);
-    d->fatorAgrupamento = sumXi/(float)(n-1) - d->fatorCarga;
+    d->fatorAgrupamento = sumXi/(double)(n-1) - d->fatorCarga;
     d->insercoesAteEvaluation = rand() % 1000;
 }
 
