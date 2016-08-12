@@ -1,7 +1,7 @@
 typedef struct lista TLista;
 
 typedef void (*TInserirLista)(TLista*, void*);
-typedef void (*TRemoverInicioLista)(TLista*);
+typedef void* (*TRemoverInicioLista)(TLista*);
 typedef void (*TRemoverLista)(TLista*, void *);
 typedef short (*TVaziaLista)(TLista*);
 typedef short (*TBuscarLista)(TLista*, void*);

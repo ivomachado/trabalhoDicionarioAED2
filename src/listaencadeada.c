@@ -53,17 +53,22 @@ static void Inserir (TLista *l, void *elem){
 
 
 //Remove do inicio da lista
-static void RemoverInicio(TLista *l){
+static void * RemoverInicio(TLista *l){
     TDadoLista *d = l->dado;
     TNo *no;
+    void * result = NULL;
 
     if(!Vazia(l)){
         no = d->inicio;
         d->inicio = d->inicio->proximo;
-
-        free(no);
+        if(d->inicio == NULL) {
+            d->fim = NULL;
+        }
         d->qtde--;
+        result = no->elemento;
+        free(no);
     }
+    return result;
 }
 
 
