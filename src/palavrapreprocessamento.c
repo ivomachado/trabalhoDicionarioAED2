@@ -5,9 +5,7 @@
 #include <string.h>
 
 typedef struct {
-    char * palavra;
     TDicionarioSemiEstatico *paginas;
-    int numeroPaginas;
     int ocorrenciasGlobais;
 }TDadoPalavraPreprocessamento;
 
@@ -20,7 +18,6 @@ static int *getOcorrenciasPagina(TPalavraProcessamento *palavra, int pag, int cr
         *k = pag;
         ocorrencias = calloc(1, sizeof(int));
         d->paginas->inserir(d->paginas, k, ocorrencias);
-        d->numeroPaginas++;
     }
     return ocorrencias;
 }
@@ -46,13 +43,17 @@ static int ocorrenciasTotais(TPalavraProcessamento *palavra) {
 
 static int numeroPaginas(TPalavraProcessamento *palavra) {
     TDadoPalavraPreprocessamento *d = (TDadoPalavraPreprocessamento*)palavra->dado;
-    return d->numeroPaginas;
+    return d->paginas->ocupacao(d->paginas);
+}
+
+static int ** listarPaginas(TPalavraProcessamento *palavra) {
+    TDadoPalavraPreprocessamento *d = (TDadoPalavraPreprocessamento*)palavra->dado;
+    return (int**) d->paginas->listarChaves(d->paginas);
 }
 
 TDadoPalavraPreprocessamento * criarDadoPalavraPreprocessamento() {
     TDadoPalavraPreprocessamento *d = (TDadoPalavraPreprocessamento*)malloc(sizeof(TDadoPalavraPreprocessamento));
     d->paginas = criarDicionarioSemiEstatico(50, intHashing, comparaTuplaChaveInteger);
-    d->numeroPaginas = 0;
     d->ocorrenciasGlobais = 0;
     return d;
 }
@@ -64,5 +65,6 @@ TPalavraProcessamento * criarPalavraProcessamento() {
     p->ocorrenciasPagina = ocorrenciasPagina;
     p->ocorrenciasTotais = ocorrenciasTotais;
     p->numeroPaginas = numeroPaginas;
+    p->listarPaginas = listarPaginas;
     return p;
 }

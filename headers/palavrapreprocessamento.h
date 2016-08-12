@@ -2,6 +2,7 @@ typedef struct palavraprocessamento TPalavraProcessamento;
 
 typedef int (*TOcorrenciasTotal)(TPalavraProcessamento*);
 typedef int (*TManipulacaoOcorrencia)(TPalavraProcessamento*, int);
+typedef int** (*TListarPaginas)(TPalavraProcessamento*);
 
 TPalavraProcessamento * criarPalavraProcessamento();
 
@@ -11,4 +12,5 @@ struct palavraprocessamento {
     TManipulacaoOcorrencia ocorrenciasPagina;
     TOcorrenciasTotal ocorrenciasTotais;
     TOcorrenciasTotal numeroPaginas;
+    TListarPaginas listarPaginas;
 };
