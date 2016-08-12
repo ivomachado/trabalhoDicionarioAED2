@@ -5,6 +5,7 @@
 #include "primitivodicionarioutils.h"
 #include "parserpalavra.h"
 #include <stdio.h>
+#include <ctype.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,15 +28,21 @@ int main(int argc, char **argv) {
             stop = criarStopWordManager();
             preprocessador = criarPreprocessamento();
             while(lerPalavra(livro, palavra)) {
-                if(strcmp(palavra,"pa") == 0) {
+                if(strcmp(palavra,"PA") == 0) {
                     pag++;
                 } else {
-                    if(!stop->isStopWord(stop, palavra) && strlen(palavra) > 0) {
+                    aux = palavra;
+                    for ( ; *aux; ++aux) *aux = tolower(*aux);
+                    int isStop = stop->isStopWord(stop, palavra); 
+                    if(!isStop && strlen(palavra) > 0) {
                         iter++;
                         preprocessador->incrementarPaginaPalavra(preprocessador, palavra, pag);
+                    } else {
+                        preprocessador->incrementarPaginaPalavra(preprocessador, "pa", pag);
                     }
                 }
             }
+            fclose(livro);
             int size = preprocessador->totalPalavras(preprocessador);
             char ** palavras = preprocessador->listarPalavras(preprocessador);
             TPalavraPreprocessamento *palavrapreprocessamento;
@@ -65,15 +72,17 @@ int main(int argc, char **argv) {
                 }
             }
             else {
+                printf("Digite uma palavra, digite \"pa\" para sair: ");
+                scanf("%s", palavra);
                 do {
-                    printf("Digite uma palavra, digite \"pa\" para sair: ");
-                    scanf("%s", palavra);
                     palavraindice = (TPalavraIndice*) indiceRemissivo->buscar(indiceRemissivo, palavra);
                     if(palavraindice != NULL) {
                         palavraindice->imprimir(palavraindice);
                     } else {
                         printf("A palavra \"%s\" nao esta presente no indice remissivo\n", palavra);
                     }
+                    printf("Digite uma palavra, digite \"pa\" para sair: ");
+                    scanf("%s", palavra);
                 } while(strcmp(palavra, "pa") != 0);
             }
             indiceRemissivo->fullEvaluation(indiceRemissivo);

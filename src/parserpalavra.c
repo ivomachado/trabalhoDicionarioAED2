@@ -24,7 +24,7 @@ int lerPalavra(FILE *fp, char *word)
 			word[i] = '\0'; typing=0;
 			return 0;
 		}
-		c = tolower(c);
+		// c = tolower(c);
 		if (strchr(del,c)==NULL){
 			word[i++] = c;
 		}else if(c == '-' && i){
