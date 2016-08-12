@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
             int size = preprocessador->totalPalavras(preprocessador);
             char ** palavras = preprocessador->listarPalavras(preprocessador);
             TPalavraPreprocessamento *palavrapreprocessamento;
-            indiceRemissivo = criarDicionarioDinamico(size, stringHashing, comparaTuplaString);
+            indiceRemissivo = criarDicionarioDinamico(sqrt(size), 2, stringHashing, comparaTuplaString);
             for(i = 0; i < size; i++) {
                 aux = palavras[i];
                 TPalavraIndice *palavraindice = criarPalavraIndice(aux, 5);
@@ -52,6 +52,7 @@ int main(int argc, char **argv) {
                 free(pages);
             }
             TPalavraIndice *palavraindice;
+            indiceRemissivo->enableSearchStats(indiceRemissivo);
             if(argc == 3 && strcmp(argv[2],"todas") == 0) {
                 for(i = 0; i < size; i++) {
                     palavraindice = (TPalavraIndice*) indiceRemissivo->buscar(indiceRemissivo, palavras[i]);
@@ -64,7 +65,7 @@ int main(int argc, char **argv) {
             }
             else {
                 do {
-                    printf("Digite uma palavra: ");
+                    printf("Digite uma palavra, digite \"pa\" para sair: ");
                     scanf("%s", palavra);
                     palavraindice = (TPalavraIndice*) indiceRemissivo->buscar(indiceRemissivo, palavra);
                     if(palavraindice != NULL) {
@@ -74,6 +75,7 @@ int main(int argc, char **argv) {
                     }
                 } while(strcmp(palavra, "pa") != 0);
             }
+            indiceRemissivo->fullEvaluation(indiceRemissivo);
         }
     }
     return 0;

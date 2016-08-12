@@ -122,10 +122,11 @@ static short Buscar(TLista *l, void *elem){
     return 0;
 }
 
-static void * BuscaRetorno(TLista *l, void *elem) {
+static void * BuscaRetorno(TLista *l, void *elem, int * iter) {
     TDadoLista *d = l->dado;
     TNo *aux;
     TComparavel *c1;
+    int comps = 0;
 
 
     if(Vazia(l)) return 0;
@@ -133,9 +134,15 @@ static void * BuscaRetorno(TLista *l, void *elem) {
     aux = d->inicio;
     c1 = (TComparavel*)aux->elemento;
     while(aux != NULL){
-        if(c1->compara(aux->elemento, elem) == 0) return aux->elemento;
+        comps++;
+        if(c1->compara(aux->elemento, elem) == 0) {
+            if(iter != NULL) *iter = comps;
+            return aux->elemento;
+        }
         aux = aux->proximo;
     }
+
+    if(iter != NULL) *iter = comps;
 
     return NULL;
 }

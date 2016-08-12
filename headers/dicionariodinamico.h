@@ -6,9 +6,10 @@ typedef void (*TInserirDicionarioDinamico)(TDicionarioDinamico*, void * k, void*
 typedef void* (*TBuscarDicionarioDinamico)(TDicionarioDinamico*, void * k);
 typedef void (*TRemoverDicionarioDinamico)(TDicionarioDinamico*, void * k);
 typedef double (*TEvaluationDicionario)(TDicionarioDinamico*);
+typedef void (*TEstatisticaManipulacao)(TDicionarioDinamico*);
 typedef int (*THashDinamico)(void *, int);
 
-TDicionarioDinamico *criarDicionarioDinamico(int tam, THashing hash, TCompara comparaTupla);
+TDicionarioDinamico *criarDicionarioDinamico(int tam, int expectativaBusca, THashing hash, TCompara comparaTupla);
 
 struct dicionario {
     void *dado;
@@ -16,4 +17,6 @@ struct dicionario {
     TBuscarDicionarioDinamico buscar;
     TRemoverDicionarioDinamico remover;
     TEvaluationDicionario evaluation;
+    TEstatisticaManipulacao fullEvaluation;
+    TEstatisticaManipulacao enableSearchStats;
 };
