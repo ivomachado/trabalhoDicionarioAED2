@@ -47,7 +47,7 @@ static void inserir(TPalavraIndice* p, int pag, double tfidf) {
 static void imprimir(TPalavraIndice* p) {
     TDadoPalavraIndice *d = (TDadoPalavraIndice*)p->dado;
     TPaginaIndice *pagina;
-    printf("Paginas de maior relevancia: ");
+    printf("Paginas de maior relevancia da palavra \"%s\", ordenadas da maior relavacia para menor: ", d->palavra);
     for(int i = 0; i < d->inseridas; i++) {
         pagina = (TPaginaIndice*)d->paginas->acessar(d->paginas, i);
         printf("%d ", pagina->pag);
