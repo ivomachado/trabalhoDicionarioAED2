@@ -18,7 +18,7 @@ typedef struct dado {
     int rehashEnabled;
 } TDadoDicionarioDinamico;
 
-TDadoDicionarioDinamico* criarDado(int tam, double fc, THashing hash, TCompara comparaTupla)
+static TDadoDicionarioDinamico* criarDado(int tam, double fc, THashing hash, TCompara comparaTupla)
 {
     srand(time(NULL));
     TDadoDicionarioDinamico* d = (TDadoDicionarioDinamico*)malloc(sizeof(TDadoDicionarioDinamico));
@@ -62,16 +62,17 @@ static double evaluationDicionario(TDicionarioDinamico *d) {
     int groups = sqrt(dd->tam), i,j;
     double fatorAgrupamento = 0.0;
     TLista *lista;
-    int pos;
+    int posi, posc;
     for(i = 0; i < groups; i++) {
         j = 0;
+        posi = rand()%groups + groups*i;
         do {
-            pos = rand()%groups + groups*i + j;
-            pos = pos%groups*(i+1);
+            posc = (posi+j)%(groups) + groups*i;
             j++;
-            lista = (TLista*)dd->array->acessar(dd->array,pos);
-        } while(lista == NULL);
-        fatorAgrupamento += lista->tamanho(lista);
+            lista = (TLista*)dd->array->acessar(dd->array,posc);
+        } while(lista == NULL && j < groups);
+        if(lista != NULL)
+            fatorAgrupamento += lista->tamanho(lista);
     }
     fatorAgrupamento /= groups;
     fatorAgrupamento -= dd->fatorCarga;
