@@ -26,9 +26,14 @@ int main(int argc, char **argv) {
                     if(!stop->isStopWord(stop, palavra) && strlen(palavra) > 0) {
                         iter++;
                         preprocessador->incrementarPaginaPalavra(preprocessador, palavra, pag);
-                        printf("%s: %d pag %d iter %d\n", palavra, preprocessador->ocorrenciaPaginaPalavra(preprocessador, palavra, pag), pag, iter);
+                        // printf("%s: %d pag %d iter %d\n", palavra, preprocessador->ocorrenciaPaginaPalavra(preprocessador, palavra, pag), pag, iter);
                     }
                 }
+            }
+            int size = preprocessador->totalPalavras(preprocessador);
+            char ** palavras = preprocessador->listarPalavras(preprocessador);
+            for(int i = 0; i < size; i++) {
+                printf("%s %d\n", palavras[i], i+1);
             }
         }
     }
