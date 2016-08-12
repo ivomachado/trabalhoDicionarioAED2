@@ -1,17 +1,23 @@
 #include "preprocessamento.h"
+#include "palavraindice.h"
+#include "dicionariodinamico.h"
 #include "stopwords.h"
+#include "primitivodicionarioutils.h"
 #include "parserpalavra.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 int main(int argc, char **argv) {
     FILE *livro;
     char palavra[500];
-    int pag = 0, iter = 0;
+    char *aux;
+    int pag = 0, iter = 0, i;
+    TDicionarioDinamico *indiceRemissivo;
     TPreprocessamento *preprocessador;
     TStopWordManager *stop;
     if(argc < 2) {
-        printf("Por favor, digite %s <caminho_relativo_livro>", argv[0]);
+        printf("Por favor, digite %s <caminho_relativo_livro> [todas]", argv[0]);
     } else {
         livro = fopen(argv[1], "r");
         if(livro == NULL) {
@@ -26,14 +32,47 @@ int main(int argc, char **argv) {
                     if(!stop->isStopWord(stop, palavra) && strlen(palavra) > 0) {
                         iter++;
                         preprocessador->incrementarPaginaPalavra(preprocessador, palavra, pag);
-                        // printf("%s: %d pag %d iter %d\n", palavra, preprocessador->ocorrenciaPaginaPalavra(preprocessador, palavra, pag), pag, iter);
                     }
                 }
             }
             int size = preprocessador->totalPalavras(preprocessador);
             char ** palavras = preprocessador->listarPalavras(preprocessador);
-            for(int i = 0; i < size; i++) {
-                printf("%s %d\n", palavras[i], i+1);
+            TPalavraPreprocessamento *palavrapreprocessamento;
+            indiceRemissivo = criarDicionarioDinamico(size, stringHashing, comparaTuplaString);
+            for(i = 0; i < size; i++) {
+                aux = palavras[i];
+                TPalavraIndice *palavraindice = criarPalavraIndice(aux, 5);
+                indiceRemissivo->inserir(indiceRemissivo, aux, palavraindice);
+                palavrapreprocessamento = preprocessador->buscarPalavraPreprocesssamento(preprocessador, aux);
+                int pageNumber = palavrapreprocessamento->numeroPaginas(palavrapreprocessamento);
+                int ** pages = palavrapreprocessamento->listarPaginas(palavrapreprocessamento);
+                for(int j = 0; j < pageNumber; j++) {
+                    palavraindice->inserir(palavraindice, *pages[j], preprocessador->TFIDF(preprocessador, aux, *pages[j]));
+                }
+                free(pages);
+            }
+            TPalavraIndice *palavraindice;
+            if(argc == 3 && strcmp(argv[2],"todas") == 0) {
+                for(i = 0; i < size; i++) {
+                    palavraindice = (TPalavraIndice*) indiceRemissivo->buscar(indiceRemissivo, palavras[i]);
+                    if(palavraindice != NULL) {
+                        palavraindice->imprimir(palavraindice);
+                    } else {
+                        printf("A palavra \"%s\" nao esta presente no indice remissivo\n", palavras[i]);
+                    }
+                }
+            }
+            else {
+                do {
+                    printf("Digite uma palavra: ");
+                    scanf("%s", palavra);
+                    palavraindice = (TPalavraIndice*) indiceRemissivo->buscar(indiceRemissivo, palavra);
+                    if(palavraindice != NULL) {
+                        palavraindice->imprimir(palavraindice);
+                    } else {
+                        printf("A palavra \"%s\" nao esta presente no indice remissivo\n", palavra);
+                    }
+                } while(strcmp(palavra, "pa") != 0);
             }
         }
     }
