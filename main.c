@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
                         iter++;
                         preprocessador->incrementarPaginaPalavra(preprocessador, palavra, pag);
                     } else {
-                        preprocessador->incrementarPaginaPalavra(preprocessador, "PA", pag);
+                        preprocessador->incrementarPaginaPalavra(preprocessador, "pa", pag);
                     }
                 }
             }
