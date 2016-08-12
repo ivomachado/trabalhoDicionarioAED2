@@ -86,6 +86,7 @@ static void* buscar(TDicionarioDinamico* d, void * k)
 
     int posi = dd->hash(k, dd->tam);
     TLista * lista = dd->array->acessar(dd->array, posi);
+    if(lista == NULL) return NULL;
     TTuplaDicionario * tupla = criarTuplaDicionario(k, NULL, dd->comparaTupla);
     TTuplaDicionario * elemento = (TTuplaDicionario*) lista->buscarComRetorno(lista, tupla);
     free(tupla);
