@@ -71,7 +71,7 @@ static void Rehashing(TDicionarioSemiEstatico *dc){
 
     d->dicionario = novoDicionario;
     d->tamanho = novoTam;
-    
+
     d->ocupacao = 0;
     d->rehashEnabled = 0;
 
@@ -167,7 +167,7 @@ static void** listarChaves(TDicionarioSemiEstatico *dc) {
     TDadoDicionarioSE *d = dc->dado;
     int size = d->ocupacao, i, nullKeysCount = 0, iter = 0;
     TTuplaDicionario * tupla;
-    void** result = malloc(size*sizeof(void*));
+    void** result = calloc(size, sizeof(void*));
     for(i = 0; i < size + nullKeysCount; i++) {
         tupla = (TTuplaDicionario*)d->dicionario->acessar(d->dicionario, i);
         if(tupla == NULL) nullKeysCount++;
