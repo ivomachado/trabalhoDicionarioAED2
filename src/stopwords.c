@@ -15,7 +15,7 @@ static int isStopWord(TStopWordManager * stop, char * word) {
     return d->dict->buscar(d->dict, word) != NULL;
 }
 
-TDadoStopWordManager * criarDadoStopWordManager() {
+static TDadoStopWordManager * criarDadoStopWordManager() {
     TDadoStopWordManager * d = (TDadoStopWordManager*)malloc(sizeof(TDadoStopWordManager));
     FILE *fp = fopen("./base/stop_words", "r");
     char pal[100];
@@ -23,7 +23,7 @@ TDadoStopWordManager * criarDadoStopWordManager() {
     void *stop_words[400];
     int word_count = 0;
     while(lerPalavra(fp, pal)) {
-        aux = (char*)malloc(sizeof(strlen(pal) + 1));
+        aux = (char*)malloc(sizeof(char)*(strlen(pal) + 1));
         strcpy(aux,pal);
         stop_words[word_count++] = aux;
     }
