@@ -3,11 +3,11 @@ INCLUDE = -Iheaders
 SRC=$(wildcard src/*.c)
 HEADERS=$(wildcard headers/*.h)
 MAIN_SRC = $(SRC) main.c
-DINAMICO_SRC = $(SRC) __dicionariodinamico__.c
-SEMIESTATICO_SRC = $(SRC) __dicionariosemiestatico__.c
-ESTATICO_SRC = $(SRC) __dicionarioestatico__.c
-STOPWORDS_SRC = $(SRC) __stopwords__.c
-PALAVRAPREPROCESSAMENTO_SRC = $(SRC) __palavrapreprocessamento__.c
+DINAMICO_SRC = $(SRC) tests/__dicionariodinamico__.c
+SEMIESTATICO_SRC = $(SRC) tests/__dicionariosemiestatico__.c
+ESTATICO_SRC = $(SRC) tests/__dicionarioestatico__.c
+STOPWORDS_SRC = $(SRC) tests/__stopwords__.c
+PALAVRAPREPROCESSAMENTO_SRC = $(SRC) tests/__palavrapreprocessamento__.c
 
 a: $(HEADERS) $(MAIN_SRC) ; gcc $(INCLUDE) -o $@ $^ $(CFLAGS)
 dinamico:  $(HEADERS) $(DINAMICO_SRC); gcc $(INCLUDE) -o a $^ $(CFLAGS)
