@@ -39,8 +39,15 @@ int main()
         a = criarInteger(i);
         dicionario->inserir(dicionario, &(a->value), a);
     }
-    a = (TInteger*)dicionario->buscarIndice(dicionario, 0);
-    a->imprimir(a);
+
+    int size = dicionario->ocupacao(dicionario);
+
+    int **array = (int**)dicionario->listarChaves(dicionario);
+
+    for(i = 0; i < size; i++) {
+        printf("chave: %d\n", *array[i]);
+    }
+
     for(i = 0; i < 1000; i++) {
         a = (TInteger*)dicionario->buscar(dicionario, &i);
         a->imprimir(a);

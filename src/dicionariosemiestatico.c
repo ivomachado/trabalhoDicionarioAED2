@@ -20,6 +20,7 @@ typedef struct {
     TCompara comparaTupla;
     THashing hashd;
     int tamanho;
+    int ocupacao;
     double fatorAgrupamento;
     double fatorCarga;
     int insercoesAteEvaluation;
@@ -70,7 +71,8 @@ static void Rehashing(TDicionarioSemiEstatico *dc){
 
     d->dicionario = novoDicionario;
     d->tamanho = novoTam;
-
+    
+    d->ocupacao = 0;
     d->rehashEnabled = 0;
 
     for(i = 0; i < tam; i++){
@@ -110,6 +112,7 @@ static void Inserir(TDicionarioSemiEstatico *dc, void* k, void *elemento){
     } else {
         d->dicionario->atualizar(d->dicionario, posc, tupla);
         d->analytics.inseriu++;
+        d->ocupacao++;
         d->insercoesAteEvaluation--;
 
         if(d->insercoesAteEvaluation == 0){
@@ -120,14 +123,6 @@ static void Inserir(TDicionarioSemiEstatico *dc, void* k, void *elemento){
         
     }
 }
-
-static void* buscarIndice(TDicionarioSemiEstatico *dc, int pos) {
-    TDadoDicionarioSE *d = dc->dado;
-    void * a = d->dicionario->acessar(d->dicionario, pos);
-    if(a == NULL) return NULL;
-    else return ((TTuplaDicionario*)a)->valor;
-}
-
 
 static void* Buscar(TDicionarioSemiEstatico *dc, void* k){
     TDadoDicionarioSE *d = dc->dado;
@@ -161,7 +156,26 @@ static void Analytics (TDicionarioSemiEstatico *dc){
     printf("\nRemoveu: %d", d->analytics.removeu);
     printf("\nMovimentou: %d", d->analytics.movimentou);
     printf("\nSobrecarregou: %d", d->analytics.sobrecarregou);
+}
 
+static int ocupacao(TDicionarioSemiEstatico *dc) {
+    TDadoDicionarioSE *d = dc->dado;
+    return d->ocupacao;
+}
+
+static void** listarChaves(TDicionarioSemiEstatico *dc) {
+    TDadoDicionarioSE *d = dc->dado;
+    int size = d->ocupacao, i, nullKeysCount = 0, iter = 0;
+    TTuplaDicionario * tupla;
+    void** result = malloc(size*sizeof(void*));
+    for(i = 0; i < size + nullKeysCount; i++) {
+        tupla = (TTuplaDicionario*)d->dicionario->acessar(d->dicionario, i);
+        if(tupla == NULL) nullKeysCount++;
+        else {
+            result[iter++] = tupla->chave;
+        }
+    }
+    return result;
 }
 
 static TDadoDicionarioSE* criarDadoDicionarioSE(int tam, double fc,  THashing hashD, TCompara comparaTuplaD){
@@ -173,6 +187,7 @@ static TDadoDicionarioSE* criarDadoDicionarioSE(int tam, double fc,  THashing ha
     d->fatorCarga = fc;
     d->fatorAgrupamento = 0.0;
     d->insercoesAteEvaluation = rand() % 1000;
+    d->ocupacao = 0;
 
     d->hashd = hashD;
     d->comparaTupla = comparaTuplaD;
@@ -197,7 +212,8 @@ TDicionarioSemiEstatico* criarDicionarioSemiEstatico(int tam, THashing hashD, TC
     dc->inserir = Inserir;
     dc->buscar = Buscar;
     dc->analytics = Analytics;
-    dc->buscarIndice = buscarIndice;
+    dc->listarChaves = listarChaves;
+    dc->ocupacao = ocupacao;
 
     return dc;
 }
