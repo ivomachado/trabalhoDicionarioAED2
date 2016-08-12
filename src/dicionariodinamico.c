@@ -122,11 +122,11 @@ static void fullEvaluation(TDicionarioDinamico *d) {
     printf("A tabela tem tamanho %d\n", dd->tam);
     printf("%.2f porcento tem ocupacao ate 10 porcento maior que o fator de carga\n", (maior10*100.0)/dd->tam);
     printf("%.2f porcento tem ocupacao ate 30 porcento maior que o fator de carga\n", (maiorate30*100.0)/dd->tam);
-    printf("%.2f porcento tem ocupacao maior que 30 porcento do fator de carga\n", (maiormais30*100.0)/dd->tam);
+    printf("%.2f porcento tem ocupacao mais que 30 porcento maior que o fator de carga\n", (maiormais30*100.0)/dd->tam);
     printf("%.2f porcento tem ocupacao igual ao fator de carga\n", (igualfator*100.0)/dd->tam);
     printf("%.2f porcento tem ocupacao ate 10 porcento menor que o fator de carga\n", (menor10*100.0)/dd->tam);
     printf("%.2f porcento tem ocupacao ate 30 porcento menor que o fator de carga\n", (menorate30*100.0)/dd->tam);
-    printf("%.2f porcento tem ocupacao menor que 30 porcento do fator de carga\n", (menormais30*100.0)/dd->tam);
+    printf("%.2f porcento tem ocupacao menor qu 30 porcento que o fator de carga\n", (menormais30*100.0)/dd->tam);
     printf("%.2f porcento da tabela esta ocupada\n",  100.0 - vazios*100.0/dd->tam);
 
     printf("%d buscas foram feitas com um total de %d comparacoes\n", dd->stats.buscou, dd->stats.comparou_busca);
